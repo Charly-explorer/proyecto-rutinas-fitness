@@ -3,7 +3,7 @@ import * as rutinasService from '../services/rutinasService.js';
 
 const router = express.Router();
 
-router.get('/rutinas', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const rutinas = await rutinasService.getAll();
     res.json(rutinas);
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/rutinas', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newRutina = await rutinasService.create(req.body);
     res.status(201).json(newRutina);
@@ -37,7 +37,7 @@ router.post('/rutinas', async (req, res) => {
   }
 });
 
-router.put('/rutinas/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const updated = await rutinasService.update(req.params.id, req.body);
     res.json(updated);
@@ -50,7 +50,7 @@ router.put('/rutinas/:id', async (req, res) => {
   }
 });
 
-router.delete('/rutinas/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const result = await rutinasService.deleteById(req.params.id);
     res.json(result);

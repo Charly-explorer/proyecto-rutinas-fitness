@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { config } from './config/config.js';
 import ejerciciosRoutes from './routes/ejerciciosRoutes.js';
+import rutinasRoutes from './routes/rutinasRoutes.js';
 import pool from './services/db.js';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/ejercicios', ejerciciosRoutes);
+app.use('/api/rutinas', rutinasRoutes);
 
 
 app.get('/api/health', (req, res) => {

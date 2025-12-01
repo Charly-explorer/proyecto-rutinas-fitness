@@ -1,4 +1,4 @@
-import { pool } from '../db.js';
+import pool from "./db.js";
 
 export const getAll = async () => {
   const [rows] = await pool.execute('SELECT * FROM rutinas ORDER BY id DESC');
@@ -40,7 +40,7 @@ export const update = async (id, rutina) => {
 
   values.push(id);
   const [result] = await pool.execute(
-    'UPDATE rutinas SET ${fields.join(', ')} WHERE id = ?',
+    `UPDATE rutinas SET ${fields.join(', ')} WHERE id = ?`,
     values
   );
 
