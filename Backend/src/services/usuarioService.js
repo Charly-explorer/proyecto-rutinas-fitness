@@ -1,4 +1,4 @@
-import pool from '../db.js';
+import pool from '../services/db.js';
 
 const usuariosService = {
 
