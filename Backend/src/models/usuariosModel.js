@@ -1,4 +1,4 @@
-const db = require('../database'); // conexión a MySQL (mysql2/promise)
+import db from "../database.js"; // importa la conexión MySQL (esm)
 
 const usuariosModel = {
 
@@ -28,4 +28,4 @@ const usuariosModel = {
     }
 };
 
-module.exports = usuariosModel;
+export default usuariosModel;
