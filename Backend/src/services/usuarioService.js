@@ -1,4 +1,5 @@
 import pool from '../services/db.js';
+import bcrypt from 'bcryptjs';
 
 const usuariosService = {
 
@@ -18,11 +19,25 @@ const usuariosService = {
         return rows[0];
     },
 
+    async getByEmail(email) {
+        const sql = "SELECT * FROM usuarios WHERE email = ?";
+        const [rows] = await pool.query(sql, [email]);
+        return rows[0]; 
+    },
+
     async create(data) {
         if (!data.nombre) throw new Error("El nombre es obligatorio");
         if (!data.email) throw new Error("El email es obligatorio");
         if (!data.password_hash) throw new Error("La contraseña es obligatoria (hash)");
         if (!data.rol) throw new Error("El rol es obligatorio");
+
+        let passwordHash = data.password_hash;
+        if (data.password) {
+            const salt = await bcrypt.genSalt(10);
+            passwordHash = await bcrypt.hash(data.password, salt);
+        }
+
+
 
         const usuario = {
             nombre: data.nombre,
@@ -44,6 +59,14 @@ const usuariosService = {
 
    async update(id, data) {
     const usuarioActual = await this.getById(id);
+
+    let passwordHash = usuarioActual.password_hash;
+    if (data.password) {
+        const salt = await bcrypt.genSalt(10);
+        passwordHash = await bcrypt.hash(data.password, salt);
+    } else if (data.password_hash) {
+        passwordHash = data.password_hash;
+    }
     const usuarioActualizado = {
         nombre: data.nombre ?? usuarioActual.nombre,
         email: data.email ?? usuarioActual.email,
