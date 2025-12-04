@@ -1,9 +1,10 @@
 import express from 'express';
 import usuariosService from '../services/usuarioService.js';
+import { verifyToken, hasRole } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, hasRole("admin"), async (req, res) => {
     try {
         const data = await usuariosService.getAll();
         res.json(data);
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, hasRole('admin'), async (req, res) => {
     try {
         const data = await usuariosService.getById(req.params.id);
         res.json(data);
@@ -21,7 +22,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, hasRole('admin'), async (req, res) => {
     try {
         const data = await usuariosService.create(req.body);
         res.status(201).json(data);
@@ -30,7 +31,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, hasRole('admin'), async (req, res) => {
     try {
         const data = await usuariosService.update(req.params.id, req.body);
         res.json(data);
@@ -39,7 +40,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, hasRole('admin'), async (req, res) => {
     try {
         const data = await usuariosService.delete(req.params.id);
         res.json(data);
