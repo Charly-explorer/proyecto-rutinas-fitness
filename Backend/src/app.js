@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/ejercicios', ejerciciosRoutes);
 app.use('/api/rutinas', rutinasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
-app.use('/api/progreso-usuario', progresoUsuariosRoutes);
+app.use('/api/progreso-usuarios', progresoUsuariosRoutes);
 
 
 
