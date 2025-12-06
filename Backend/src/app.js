@@ -14,6 +14,7 @@ import { config } from './config/config.js';
 import ejerciciosRoutes from './routes/ejerciciosRoutes.js';
 import rutinasRoutes from './routes/rutinasRoutes.js';
 import usuariosRoutes from './routes/usuarioRoute.js';
+import progresoUsuariosRoutes from './routes/progresoUsuarioRoutes.js';
 import pool from './services/db.js';
 
 const swaggerDocument = JSON.parse(fs.readFileSync("./doc/swagger.json", "utf8"));
@@ -42,6 +43,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ejercicios', ejerciciosRoutes);
 app.use('/api/rutinas', rutinasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/progreso-usuario', progresoUsuariosRoutes);
+
 
 
 app.get('/api/health', (req, res) => {
