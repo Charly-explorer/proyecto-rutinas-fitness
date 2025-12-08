@@ -54,7 +54,7 @@ router.get("/usuario/:usuario_id/activa", verifyToken, async (req, res) => {
 router.get(
   "/rutina/:rutina_id/usuarios",
   verifyToken,
-  hasRole(["admin"]),
+  hasRole("admin"),
   async (req, res) => {
     try {
       const usuarios = await usuarioRutinasService.getUsuariosByRutina(

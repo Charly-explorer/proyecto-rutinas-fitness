@@ -1,5 +1,6 @@
 import express from 'express';
 import * as ejerciciosService from '../services/ejerciciosService.js';
+import { verifyToken, hasRole } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 
@@ -38,7 +39,7 @@ router.get('/:id', async (req,res)=>{
 
 //POST para crear un ejercicio.
 
-router.post('/',async(req,res)=>{
+router.post('/', verifyToken, hasRole('admin'), async(req,res)=>{
     try{
     const nuevoEjercicio = await ejerciciosService.create(req.body)
     res.status(201).json({succes:true, message: 'El ejercicio se creo exitosamente', data: nuevoEjercicio});
@@ -54,7 +55,7 @@ router.post('/',async(req,res)=>{
 
 //PUT para actualizar ejercicio
 
-router.put('/:id', async(req,res)=>{
+router.put('/:id', verifyToken, hasRole('admin'), async(req,res)=>{
     try{
         const {id} = req.params;
         const ejercicioActualizado = await ejerciciosService.update(id, req.body);
@@ -72,7 +73,7 @@ router.put('/:id', async(req,res)=>{
 
 //DELETE eliminar ejercicio por id
 
-router.delete('/:id', async( req,res)=>{
+router.delete('/:id', verifyToken, hasRole('admin'), async( req,res)=>{
     try {
     const { id } = req.params;
     const result = await ejerciciosService.deleteById(id);

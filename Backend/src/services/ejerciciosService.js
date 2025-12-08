@@ -96,41 +96,39 @@ export const update = async (id, ejercicioData) => {
     riesgos,
   } = ejercicioData;
 
+  // Construir query dinámicamente solo con los campos enviados
+  const fields = [];
+  const values = [];
+
+  if (nombre !== undefined) { fields.push('nombre = ?'); values.push(nombre); }
+  if (descripcion !== undefined) { fields.push('descripcion = ?'); values.push(descripcion); }
+  if (musculo_principal !== undefined) { fields.push('musculo_principal = ?'); values.push(musculo_principal); }
+  if (musculos_secundarios !== undefined) { fields.push('musculos_secundarios = ?'); values.push(musculos_secundarios); }
+  if (equipamiento !== undefined) { fields.push('equipamiento = ?'); values.push(equipamiento); }
+  if (nivel !== undefined) { fields.push('nivel = ?'); values.push(nivel); }
+  if (tipo !== undefined) { fields.push('tipo = ?'); values.push(tipo); }
+  if (repeticiones_sugeridas !== undefined) { fields.push('repeticiones_sugeridas = ?'); values.push(repeticiones_sugeridas); }
+  if (series_sugeridas !== undefined) { fields.push('series_sugeridas = ?'); values.push(series_sugeridas); }
+  if (peso_sugerido !== undefined) { fields.push('peso_sugerido = ?'); values.push(peso_sugerido); }
+  if (riesgos !== undefined) { fields.push('riesgos = ?'); values.push(riesgos); }
+
+  if (fields.length === 0) {
+    throw new Error("No hay datos para actualizar");
+  }
+
+  values.push(id);
+
   const [result] = await pool.execute(
-    `UPDATE ejercicios SET
-      nombre = ?,
-      descripcion = ?,
-      musculo_principal = ?,
-      musculos_secundarios = ?,
-      equipamiento = ?,
-      nivel = ?,
-      tipo = ?,
-      repeticiones_sugeridas = ?,
-      series_sugeridas = ?,
-      peso_sugerido = ?,
-      riesgos = ?
-    WHERE id = ?`,
-    [
-      nombre,
-      descripcion,
-      musculo_principal,
-      musculos_secundarios,
-      equipamiento,
-      nivel,
-      tipo,
-      repeticiones_sugeridas,
-      series_sugeridas,
-      peso_sugerido,
-      riesgos,
-      id,
-    ]
+    `UPDATE ejercicios SET ${fields.join(', ')} WHERE id = ?`,
+    values
   );
 
   if (result.affectedRows === 0) {
     throw new Error("El ejercicio que intenta actualizar no fue encontrado");
   }
-  const [update] = await pool.execute("SELECT * FROM ejercicios WHERE id = ?", [id]);
-  return update[0];
+  
+  const [updated] = await pool.execute("SELECT * FROM ejercicios WHERE id = ?", [id]);
+  return updated[0];
 };
 export const deleteById = async(id)=>{
     const[result]= await pool.execute('DELETE FROM ejercicios WHERE id = ?', [id]);
