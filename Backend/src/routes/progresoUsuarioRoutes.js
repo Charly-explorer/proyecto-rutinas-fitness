@@ -3,12 +3,14 @@ import * as progresoService from "../services/progresoUsuarioService.js";
 
 const router = express.Router();
 
-// GET: obtener todos los progresos
+// GET: obtener todos los progresos con filtros extendidos
 router.get("/", async (req, res) => {
   try {
     const filters = {
       usuario_id: req.query.usuario_id || null,
       fecha: req.query.fecha || null,
+      rutina_id: req.query.rutina_id || null,
+      ejercicio_id: req.query.ejercicio_id || null,
     };
 
     const progresos = await progresoService.getAll(filters);
@@ -50,14 +52,18 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// PUT: Actualizar progreso
+// PUT: Actualizar progreso con campos extendidos
 router.put("/:id", async (req, res) => {
   try {
-    const { usuario_id, fecha, peso_kg, notas } = req.body;
+    const { usuario_id } = req.body;
     const { id } = req.params;
 
-    const message = await progresoService.updateProgresoUsuario(id, usuario_id, { fecha, peso_kg, notas });
-    res.json({ message });
+    if (!usuario_id) {
+      return res.status(400).json({ error: "usuario_id es requerido" });
+    }
+
+    const message = await progresoService.updateProgresoUsuario(id, usuario_id, req.body);
+    res.json({ success: true, message });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

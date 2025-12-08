@@ -28,7 +28,7 @@ const usuariosService = {
     async create(data) {
         if (!data.nombre) throw new Error("El nombre es obligatorio");
         if (!data.email) throw new Error("El email es obligatorio");
-        if (!data.password_hash) throw new Error("La contraseña es obligatoria (hash)");
+        if (!data.password && !data.password_hash) throw new Error("La contraseña es obligatoria");
         if (!data.rol) throw new Error("El rol es obligatorio");
 
         let passwordHash = data.password_hash;
@@ -37,12 +37,10 @@ const usuariosService = {
             passwordHash = await bcrypt.hash(data.password, salt);
         }
 
-
-
         const usuario = {
             nombre: data.nombre,
             email: data.email,
-            password_hash: data.password_hash,
+            password_hash: passwordHash,
             edad: data.edad || null,
             estatura_cm: data.estatura_cm || null,
             peso_kg: data.peso_kg || null,
