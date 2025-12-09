@@ -1,10 +1,16 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API Rutinas Fitness - Usuarios",
+    "title": "API Fitness",
     "version": "1.0.0",
-    "description": "Documentación de los endpoints de Usuarios y Autenticación."
+    "description": "Documentación "
   },
+
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
 
   "components": {
     "securitySchemes": {
@@ -13,32 +19,20 @@
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
-    },
-
-    "schemas": {
-      "Usuario": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "example": 1 },
-          "nombre": { "type": "string", "example": "Juan Pérez" },
-          "email": { "type": "string", "example": "juan@gmail.com" },
-          "password_hash": { "type": "string", "example": "$2a$10$..." },
-          "edad": { "type": "integer", "example": 20 },
-          "estatura_cm": { "type": "integer", "example": 175 },
-          "peso_kg": { "type": "number", "example": 70 },
-          "nivel_actividad": { "type": "string", "example": "moderado" },
-          "objetivo": { "type": "string", "example": "ganar masa muscular" },
-          "rol": { "type": "string", "example": "admin" }
-        }
-      }
     }
   },
 
+  "security": [
+    { "bearerAuth": [] }
+  ],
+
   "paths": {
-    "/api/auth/login": {
+
+    "/auth/login": {
       "post": {
-        "summary": "Iniciar sesión",
         "tags": ["Auth"],
+        "summary": "Login de usuario",
+        "description": "Retorna un token JWT",
         "requestBody": {
           "required": true,
           "content": {
@@ -46,117 +40,197 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": { "type": "string", "example": "admin@gmail.com" },
-                  "password": { "type": "string", "example": "123456" }
-                }
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Inicio de sesión exitoso. Devuelve token JWT."
-          },
-          "400": { "description": "Credenciales incorrectas." }
+          "200": { "description": "Token generado" },
+          "400": { "description": "Credenciales incorrectas" }
         }
       }
     },
 
-    "/api/usuarios": {
+
+    "/usuarios": {
       "get": {
-        "summary": "Obtener la lista de usuarios (solo ADMIN)",
         "tags": ["Usuarios"],
+        "summary": "Obtener todos los usuarios (admin)",
         "security": [{ "bearerAuth": [] }],
         "responses": {
-          "200": {
-            "description": "Lista de usuarios",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Usuario" }
-                }
-              }
-            }
-          },
-          "401": { "description": "Token requerido" },
-          "403": { "description": "No autorizado" }
+          "200": { "description": "Lista de usuarios" }
+        }
+      },
+
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Crear usuario",
+        "responses": {
+          "201": { "description": "Usuario creado" }
         }
       }
     },
 
-    "/api/usuarios/{id}": {
+
+    "/usuarios/{id}": {
       "get": {
-        "summary": "Obtener un usuario por ID (solo ADMIN)",
         "tags": ["Usuarios"],
+        "summary": "Obtener usuario por ID",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
+          { "name": "id", "in": "path", "required": true }
         ],
         "responses": {
-          "200": { "description": "Usuario encontrado" },
-          "404": { "description": "Usuario no encontrado" }
+          "200": { "description": "OK" },
+          "403": { "description": "No permitido" }
         }
       },
 
       "put": {
-        "summary": "Actualizar usuario por ID (solo ADMIN)",
         "tags": ["Usuarios"],
+        "summary": "Actualizar usuario",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Usuario" }
-            }
-          }
-        },
         "responses": {
-          "200": { "description": "Usuario actualizado" },
-          "404": { "description": "Usuario no encontrado" }
+          "200": { "description": "Actualizado" }
         }
       },
 
       "delete": {
-        "summary": "Eliminar usuario por ID (solo ADMIN)",
         "tags": ["Usuarios"],
+        "summary": "Eliminar usuario (admin)",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+          { "name": "id", "in": "path", "required": true }
         ],
         "responses": {
-          "200": { "description": "Usuario eliminado correctamente" },
-          "404": { "description": "Usuario no encontrado" }
+          "200": { "description": "Eliminado" }
         }
       }
     },
 
-    "/api/usuarios": {
+
+    "/rutinas": {
+      "get": {
+        "tags": ["Rutinas"],
+        "summary": "Obtener rutinas",
+        "responses": { "200": { "description": "OK" } }
+      },
       "post": {
-        "summary": "Crear un usuario (solo ADMIN)",
-        "tags": ["Usuarios"],
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Usuario" }
-            }
-          }
-        },
+        "tags": ["Rutinas"],
+        "summary": "Crear rutina",
+        "responses": { "201": { "description": "Creado" } }
+      }
+    },
+
+
+    "/rutinas/{id}": {
+      "get": {
+        "tags": ["Rutinas"],
+        "summary": "Obtener rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
         "responses": {
-          "201": { "description": "Usuario creado correctamente" },
-          "400": { "description": "Datos inválidos" }
+          "200": { "description": "OK" },
+          "404": { "description": "No encontrada" }
+        }
+      },
+      "put": {
+        "tags": ["Rutinas"],
+        "summary": "Actualizar rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "responses": { "200": { "description": "Actualizada" } }
+      },
+      "delete": {
+        "tags": ["Rutinas"],
+        "summary": "Eliminar rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "responses": { "200": { "description": "Eliminada" } }
+      }
+    },
+
+
+    "/usuario-rutinas/usuario/{usuario_id}": {
+      "get": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Obtener rutinas asignadas a usuario",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "in": "path", "name": "usuario_id", "required": true }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+
+    "/usuario-rutinas/usuario/{usuario_id}/activa": {
+      "get": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Rutina activa",
+        "parameters": [
+          { "in": "path", "name": "usuario_id", "required": true }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "OK" },
+          "404": { "description": "No hay rutina activa" }
         }
       }
+    },
+
+    "/usuario-rutinas": {
+      "post": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Asignar rutina",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "Asignada" } }
+      }
+    },
+
+
+    "/usuario-rutinas/{id}/activar": {
+      "put": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Activar rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+
+
+    "/rutina-ejercicios/rutina/{rutina_id}": {
+      "get": {
+        "tags": ["Rutina-Ejercicios"],
+        "summary": "Obtener ejercicios de rutina",
+        "parameters": [
+          { "in": "path", "name": "rutina_id", "required": true }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+
+
+    "/rutina-ejercicios": {
+      "post": {
+        "tags": ["Rutina-Ejercicios"],
+        "summary": "Agregar ejercicio a rutina",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "OK" } }
+      }
     }
+
   }
 }
