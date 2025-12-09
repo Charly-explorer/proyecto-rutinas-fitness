@@ -1,0 +1,236 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Fitness",
+    "version": "1.0.0",
+    "description": "Documentación "
+  },
+
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+
+  "security": [
+    { "bearerAuth": [] }
+  ],
+
+  "paths": {
+
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login de usuario",
+        "description": "Retorna un token JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Token generado" },
+          "400": { "description": "Credenciales incorrectas" }
+        }
+      }
+    },
+
+
+    "/usuarios": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Obtener todos los usuarios (admin)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de usuarios" }
+        }
+      },
+
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Crear usuario",
+        "responses": {
+          "201": { "description": "Usuario creado" }
+        }
+      }
+    },
+
+
+    "/usuarios/{id}": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Obtener usuario por ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "403": { "description": "No permitido" }
+        }
+      },
+
+      "put": {
+        "tags": ["Usuarios"],
+        "summary": "Actualizar usuario",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true }
+        ],
+        "responses": {
+          "200": { "description": "Actualizado" }
+        }
+      },
+
+      "delete": {
+        "tags": ["Usuarios"],
+        "summary": "Eliminar usuario (admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true }
+        ],
+        "responses": {
+          "200": { "description": "Eliminado" }
+        }
+      }
+    },
+
+
+    "/rutinas": {
+      "get": {
+        "tags": ["Rutinas"],
+        "summary": "Obtener rutinas",
+        "responses": { "200": { "description": "OK" } }
+      },
+      "post": {
+        "tags": ["Rutinas"],
+        "summary": "Crear rutina",
+        "responses": { "201": { "description": "Creado" } }
+      }
+    },
+
+
+    "/rutinas/{id}": {
+      "get": {
+        "tags": ["Rutinas"],
+        "summary": "Obtener rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "responses": {
+          "200": { "description": "OK" },
+          "404": { "description": "No encontrada" }
+        }
+      },
+      "put": {
+        "tags": ["Rutinas"],
+        "summary": "Actualizar rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "responses": { "200": { "description": "Actualizada" } }
+      },
+      "delete": {
+        "tags": ["Rutinas"],
+        "summary": "Eliminar rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "responses": { "200": { "description": "Eliminada" } }
+      }
+    },
+
+
+    "/usuario-rutinas/usuario/{usuario_id}": {
+      "get": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Obtener rutinas asignadas a usuario",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "in": "path", "name": "usuario_id", "required": true }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+
+    "/usuario-rutinas/usuario/{usuario_id}/activa": {
+      "get": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Rutina activa",
+        "parameters": [
+          { "in": "path", "name": "usuario_id", "required": true }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "OK" },
+          "404": { "description": "No hay rutina activa" }
+        }
+      }
+    },
+
+    "/usuario-rutinas": {
+      "post": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Asignar rutina",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "Asignada" } }
+      }
+    },
+
+
+    "/usuario-rutinas/{id}/activar": {
+      "put": {
+        "tags": ["Usuario-Rutinas"],
+        "summary": "Activar rutina",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+
+
+    "/rutina-ejercicios/rutina/{rutina_id}": {
+      "get": {
+        "tags": ["Rutina-Ejercicios"],
+        "summary": "Obtener ejercicios de rutina",
+        "parameters": [
+          { "in": "path", "name": "rutina_id", "required": true }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+
+
+    "/rutina-ejercicios": {
+      "post": {
+        "tags": ["Rutina-Ejercicios"],
+        "summary": "Agregar ejercicio a rutina",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "OK" } }
+      }
+    }
+
+  }
+}

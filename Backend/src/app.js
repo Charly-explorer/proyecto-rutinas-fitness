@@ -1,23 +1,53 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import authRoutes from "./routes/authRoutes.js";
+
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+
+
+
 import { config } from './config/config.js';
 import ejerciciosRoutes from './routes/ejerciciosRoutes.js';
 import rutinasRoutes from './routes/rutinasRoutes.js';
 import usuariosRoutes from './routes/usuarioRoute.js';
 import progresoUsuariosRoutes from './routes/progresoUsuarioRoutes.js';
+import rutinaEjerciciosRoutes from './routes/rutinaEjerciciosRoutes.js';
+import usuarioRutinasRoutes from './routes/usuarioRutinasRoutes.js';
 import pool from './services/db.js';
 
+const swaggerDocument = JSON.parse(fs.readFileSync("./doc/swagger.json", "utf8"));
+
 const app = express();
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use(helmet());
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100,                 // 100 requests por IP
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 app.use(cors({ origin: config.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
+app.use('/api/auth', authRoutes);
+
 app.use('/api/ejercicios', ejerciciosRoutes);
 app.use('/api/rutinas', rutinasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/progreso-usuario', progresoUsuariosRoutes);
+app.use('/api/rutina-ejercicios', rutinaEjerciciosRoutes);
+app.use('/api/usuario-rutinas', usuarioRutinasRoutes);
 
 
 
