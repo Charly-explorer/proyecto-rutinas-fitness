@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
     res.status(201).json(nuevo);
   } catch (error) {
     console.error("Error en POST progreso_usuario:", error);
-    res.status(500).json({ error: "Error al registrar progreso" });
+    res.status(500).json({ error: error.message || "Error al registrar progreso" });
   }
 });
 

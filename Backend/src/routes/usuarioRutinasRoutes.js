@@ -51,8 +51,7 @@ router.get("/usuario/:usuario_id/activa", verifyToken, async (req, res) => {
   }
 });
 
-router.get(
-  "/rutina/:rutina_id/usuarios",
+router.get("/rutina/:rutina_id/usuarios",
   verifyToken,
   hasRole("admin"),
   async (req, res) => {

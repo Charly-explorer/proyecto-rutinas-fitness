@@ -167,6 +167,22 @@ export const create = async (data) => {
     throw new Error("usuario_id y fecha son obligatorios");
   }
 
+  // Validar que rutina_id exista si se proporciona
+  if (rutina_id) {
+    const [rutinaExists] = await pool.query('SELECT id FROM rutinas WHERE id = ?', [rutina_id]);
+    if (rutinaExists.length === 0) {
+      throw new Error(`La rutina con id ${rutina_id} no existe`);
+    }
+  }
+
+  // Validar que ejercicio_id exista si se proporciona
+  if (ejercicio_id) {
+    const [ejercicioExists] = await pool.query('SELECT id FROM ejercicios WHERE id = ?', [ejercicio_id]);
+    if (ejercicioExists.length === 0) {
+      throw new Error(`El ejercicio con id ${ejercicio_id} no existe`);
+    }
+  }
+
   const [result] = await pool.query(
     `INSERT INTO progreso_usuarios 
     (usuario_id, rutina_id, ejercicio_id, fecha, series_completadas, repeticiones_completadas, peso_usado_kg, peso_kg, notas)
