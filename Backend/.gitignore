@@ -1,0 +1,11 @@
+# Variables de entorno
+.env
+
+# Dependencias
+node_modules/
+
+# Logs de auditoría
+logs/*.log
+
+# Mantener estructura de carpetas
+!logs/.gitkeep

@@ -2,11 +2,17 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import authRoutes from "./routes/authRoutes.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 
@@ -26,6 +32,37 @@ const app = express();
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(helmet());
+
+
+const logsDir = path.join(__dirname, '..', 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+const accessLogStream = fs.createWriteStream(
+  path.join(logsDir, 'access.log'),
+  { flags: 'a' } 
+);
+
+const errorLogStream = fs.createWriteStream(
+  path.join(logsDir, 'error.log'),
+  { flags: 'a' }
+);
+
+
+if (config.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+
+app.use(morgan('combined', { stream: accessLogStream }));
+
+
+app.use(morgan('combined', {
+  stream: errorLogStream,
+  skip: (req, res) => res.statusCode < 400
+}));
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100,                 // 100 requests por IP
