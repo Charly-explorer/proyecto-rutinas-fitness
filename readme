@@ -1,0 +1,435 @@
+Tabla de Contenidos
+Descripción
+Requisitos Previos
+Instalación
+Configuración
+Estructura del Proyecto
+Uso
+Endpoints
+Autenticación
+Base de Datos
+Solución de Problemas
+
+ Descripción
+API Fitness es una aplicación backend completa para gestionar rutinas de ejercicios, usuarios, progreso y seguimiento físico. Construida con Node.js, Express y MariaDB, ofrece autenticación JWT, control de roles y una estructura robusta para aplicaciones de fitness.
+
+🛠 Requisitos Previos
+Node.js v16+
+npm o yarn
+MariaDB/MySQL 5.7+
+Postman o similar (para pruebas)
+
+
+
+Instalación
+git clone <repositorio>
+cd proyecto-rutinas-fitness/Backend
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Crear archivo .env en la raíz
+cp .env.example .env
+
+# 4. Configurar variables de entorno
+# (Ver sección Configuración)
+
+# 5. Iniciar el servidor
+npm start
+
+ Configuración
+ # Puerto del servidor
+PORT=4000
+
+# Base de Datos
+DB_HOST=172.178.53.205
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=superpassword
+DB_NAME=rutinas_fitness_db
+
+# JWT
+JWT_SECRET=supersecret
+JWT_EXPIRES_IN=1h
+
+# Ambiente
+NODE_ENV=development
+
+# CORS
+CORS_ORIGIN=*
+
+Instalar Dependencias Necesarias
+
+npm install express cors helmet express-rate-limit dotenv jsonwebtoken bcryptjs mariadb swagger-ui-express
+
+npm install -D nodemon
+
+Iniciar Servidor
+# Desarrollo (con nodemon)
+npm run dev
+
+# Producción
+npm start
+
+Servidor disponible en: http://localhost:4000
+
+Health Check
+curl http://localhost:4000/api/health
+
+ Endpoints
+ Autenticación
+Login
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@example.com",
+  "password": "password123"
+}
+{
+  "message": "Login exitoso",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "email": "usuario@example.com",
+    "rol": "usuario"
+  }
+}
+
+Crear Usuario (Registro)
+POST /api/usuarios
+Content-Type: application/json
+
+{
+  "nombre": "Juan Pérez",
+  "email": "juan@example.com",
+  "password": "password123",
+  "rol": "usuario"
+}
+
+Obtener Todos los Usuarios (Admin)
+GET /api/usuarios
+Authorization: Bearer <token>
+
+Obtener Usuario por ID
+GET /api/usuarios/{id}
+Authorization: Bearer <token>
+
+Actualizar Usuario
+PUT /api/usuarios/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "nombre": "Juan Actualizado",
+  "email": "nuevo@example.com",
+  "password": "newpassword123"
+}
+
+Eliminar Usuario (Admin)
+DELETE /api/usuarios/{id}
+Authorization: Bearer <token>
+
+Obtener Todos los Ejercicios
+GET /api/ejercicios?nivel=intermedio&musculo_principal=pecho
+
+Obtener Ejercicio por ID
+GET /api/ejercicios/{id}
+
+Crear Ejercicio (Admin)
+POST /api/ejercicios
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "nombre": "Press de Banca",
+  "descripcion": "Ejercicio de pecho con barra",
+  "musculo_principal": "pecho",
+  "musculos_secundarios": "triceps",
+  "equipamiento": "barra",
+  "nivel": "intermedio",
+  "tipo": "fuerza",
+  "repeticiones_sugeridas": 8,
+  "series_sugeridas": 3,
+  "peso_sugerido": 50,
+  "riesgos": "Lesión de hombro"
+}
+
+Actualizar Ejercicio (Admin)
+PUT /api/ejercicios/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "nombre": "Press de Banca Actualizado"
+}
+
+Eliminar Ejercicio (Admin)
+DELETE /api/ejercicios/{id}
+Authorization: Bearer <token>
+
+Obtener Todas las Rutinas
+GET /api/rutinas
+
+
+Obtener Todas las Rutinas
+GET /api/rutinas
+
+
+Obtener Rutina por ID
+GET /api/rutinas/{id}
+
+Crear Rutina (Autenticado)
+POST /api/rutinas
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "nombre": "Rutina Pecho y Triceps",
+  "descripcion": "Rutina enfocada en pecho",
+  "objetivo": "hipertrofia",
+  "nivel": "intermedio",
+  "dias_por_semana": 3,
+  "tipo": "fullbody"
+}
+
+Actualizar Rutina (Autenticado)
+PUT /api/rutinas/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "nombre": "Rutina Actualizada"
+}
+
+Eliminar Rutina (Autenticado)
+DELETE /api/rutinas/{id}
+Authorization: Bearer <token>
+
+Obtener Ejercicios de una Rutina
+GET /api/rutina-ejercicios/rutina/{rutina_id}
+
+Agregar Ejercicio a Rutina
+POST /api/rutina-ejercicios
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "rutina_id": 1,
+  "ejercicio_id": 5,
+  "dia_semana": "lunes",
+  "orden": 1
+}
+
+Obtener Rutinas Asignadas al Usuario
+GET /api/usuario-rutinas/usuario/{usuario_id}
+Authorization: Bearer <token>
+
+Obtener Rutina Activa
+GET /api/usuario-rutinas/usuario/{usuario_id}/activa
+Authorization: Bearer <token>
+
+Asignar Rutina a Usuario
+POST /api/usuario-rutinas
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "rutina_id": 3,
+  "fecha_asignacion": "2024-01-15",
+  "activa": true
+}
+
+Activar Rutina
+PUT /api/usuario-rutinas/{id}/activar
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "usuario_id": 1
+}
+
+
+Obtener Progreso del Usuario
+GET /api/progreso-usuario/usuario/{usuario_id}
+Authorization: Bearer <token>
+
+Crear Registro de Progreso
+POST /api/progreso-usuario
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "fecha": "2024-01-20",
+  "peso_kg": 85,
+  "rutina_id": 3,
+  "ejercicio_id": 5,
+  "series_completadas": 3,
+  "repeticiones_completadas": 8,
+  "peso_usado_kg": 50,
+  "notas": "Buena sesión"
+}
+
+
+ Autenticación
+Flujo de Autenticación
+Login → Recibe token JWT
+Almacenar → Guardar token en localStorage o variable
+Usar → Enviar en header Authorization: Bearer <token>
+Token JWT
+El token contiene:
+
+{
+  "id": 1,
+  "email": "usuario@example.com",
+  "rol": "admin",
+  "iat": 1705699200,
+  "exp": 1705702800
+}
+
+
+Roles y Permisos
+Rol	Permisos
+admin	Crear/actualizar/eliminar ejercicios, ver todos los usuarios, gestionar roles
+usuario	Ver/actualizar su perfil, ver sus rutinas, registrar progreso
+
+
+Base de Datos
+Esquema Relacional
+-- Usuarios
+CREATE TABLE usuarios (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  edad INT,
+  estatura_cm INT,
+  peso_kg DECIMAL(5,2),
+  nivel_actividad VARCHAR(50),
+  objetivo VARCHAR(100),
+  rol ENUM('admin', 'usuario') DEFAULT 'usuario',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Ejercicios
+CREATE TABLE ejercicios (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  descripcion TEXT,
+  musculo_principal VARCHAR(50),
+  musculos_secundarios VARCHAR(100),
+  equipamiento VARCHAR(100),
+  nivel VARCHAR(50),
+  tipo VARCHAR(50),
+  repeticiones_sugeridas INT,
+  series_sugeridas INT,
+  peso_sugerido DECIMAL(5,2),
+  riesgos TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Rutinas
+CREATE TABLE rutinas (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  descripcion TEXT,
+  objetivo VARCHAR(100),
+  nivel VARCHAR(50),
+  dias_por_semana INT,
+  tipo VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Rutina-Ejercicios
+CREATE TABLE rutina_ejercicios (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  rutina_id INT NOT NULL,
+  ejercicio_id INT NOT NULL,
+  dia_semana VARCHAR(20),
+  orden INT,
+  FOREIGN KEY (rutina_id) REFERENCES rutinas(id) ON DELETE CASCADE,
+  FOREIGN KEY (ejercicio_id) REFERENCES ejercicios(id) ON DELETE CASCADE
+);
+
+-- Usuario-Rutinas
+CREATE TABLE usuario_rutinas (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id INT NOT NULL,
+  rutina_id INT NOT NULL,
+  fecha_asignacion DATE,
+  activa BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (rutina_id) REFERENCES rutinas(id) ON DELETE CASCADE
+);
+
+-- Progreso Usuarios
+CREATE TABLE progreso_usuarios (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  usuario_id INT NOT NULL,
+  rutina_id INT,
+  ejercicio_id INT,
+  fecha DATE NOT NULL,
+  peso_kg DECIMAL(5,2),
+  series_completadas INT,
+  repeticiones_completadas INT,
+  peso_usado_kg DECIMAL(5,2),
+  notas TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  FOREIGN KEY (rutina_id) REFERENCES rutinas(id),
+  FOREIGN KEY (ejercicio_id) REFERENCES ejercicios(id)
+);
+
+Solución de Problemas
+El servidor no abre el puerto
+# Buscar proceso usando puerto 4000
+netstat -ano | findstr :4000
+
+# Matar el proceso (Windows)
+taskkill /PID <PID> /F
+
+# O cambiar puerto en .env
+PORT=5000
+
+
+No se genera el token en login
+Problema: Token no aparece en respuesta
+
+Soluciones:
+
+Verificar que JWT_SECRET esté en .env
+Revisar que usuariosService.getByEmail() exista
+Validar credenciales en BD (usuario y contraseña)
+
+# En la consola del servidor
+console.log('Token generado:', token);
+
+
+
+Ejemplo: Flujo Completo de Login
+# 1. Crear usuario
+curl -X POST http://localhost:4000/api/usuarios \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Juan",
+    "email": "juan@test.com",
+    "password": "12345678",
+    "rol": "usuario"
+  }'
+
+# 2. Hacer login
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "juan@test.com",
+    "password": "12345678"
+  }'
+
+# Copia el token de la respuesta
+
+# 3. Usar token para acceder a rutas protegidas
+curl -X GET http://localhost:4000/api/usuarios/1 \
+  -H "Authorization: Bearer <TOKEN_AQUI>"
