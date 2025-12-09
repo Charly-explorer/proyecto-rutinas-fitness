@@ -20,7 +20,6 @@ MariaDB/MySQL 5.7+
 Postman o similar (para pruebas)
 
 
-
 Instalación
 git clone <repositorio>
 cd proyecto-rutinas-fitness/Backend
@@ -71,10 +70,10 @@ npm run dev
 # Producción
 npm start
 
-Servidor disponible en: http://localhost:4000
+Servidor disponible en: https://rutinas-fitness.onrender.com
 
 Health Check
-curl http://localhost:4000/api/health
+curl https://rutinas-fitness.onrender.com/api/health
 
  Endpoints
  Autenticación
@@ -411,7 +410,7 @@ console.log('Token generado:', token);
 
 Ejemplo: Flujo Completo de Login
 # 1. Crear usuario
-curl -X POST http://localhost:4000/api/usuarios \
+curl -X POST https://rutinas-fitness.onrender.com/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{
     "nombre": "Juan",
@@ -421,7 +420,7 @@ curl -X POST http://localhost:4000/api/usuarios \
   }'
 
 # 2. Hacer login
-curl -X POST http://localhost:4000/api/auth/login \
+curl -X POST https://rutinas-fitness.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "juan@test.com",
@@ -431,5 +430,5 @@ curl -X POST http://localhost:4000/api/auth/login \
 # Copia el token de la respuesta
 
 # 3. Usar token para acceder a rutas protegidas
-curl -X GET http://localhost:4000/api/usuarios/1 \
+curl -X GET https://rutinas-fitness.onrender.com/api/usuarios/1 \
   -H "Authorization: Bearer <TOKEN_AQUI>"
